@@ -1,0 +1,7 @@
+(library
+ (name ProgFuncETL)
+ (modules types pure impure)
+ (wrapped false)
+ (libraries csv sqlite3 cohttp-lwt-unix lwt)
+ (preprocess (pps lwt_ppx))
+)

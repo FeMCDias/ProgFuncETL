@@ -1,0 +1,7 @@
+(executable
+ (name main)
+ (public_name progfuncetl_app)
+ (modules main)
+ (libraries ProgFuncETL)
+ (preprocess (pps lwt_ppx))
+)
