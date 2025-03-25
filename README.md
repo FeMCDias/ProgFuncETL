@@ -36,6 +36,12 @@ Instale com o [opam](https://opam.ocaml.org/):
 opam install dune csv sqlite3 cohttp-lwt-unix lwt lwt_ppx ounit2
 ```
 
+Em alguns macbooks, pode ser necessário instalar o pkg-config antes de instalar as dependências para o SQLite.
+
+```bash
+brew install pkg-config
+```
+
 ---
 
 ## 🔧 Compilação e Execução
@@ -62,21 +68,22 @@ dune exec progfuncetl_app
 
 ## 🚀 Funcionalidades
 
-- 📥 **Download de Dados:** Lê arquivos CSV diretamente de URLs via HTTP.
-- 🔁 **Transformações Funcionais:** Usa `map`, `filter`, `reduce` e `inner join` para processar os dados.
-- 📄 **Geração de CSV:** Exporta arquivo com `order_id`, `total_amount`, `total_taxes`.
-- 📊 **Agregações:** Calcula média de receita e impostos por mês e ano.
-- 🗃️ **Persistência:** Armazena resultados em banco de dados SQLite.
-- 🧪 **Testes:** Suíte completa para testar funções puras e impuras.
+- **Download de Dados:** Lê arquivos CSV diretamente de URLs via HTTP.
+- **Transformações Funcionais:** Usa funções como `map`, `filter`, `reduce` e inner join para processar os dados.
+- **Geração de CSV:** Exporta um arquivo com os campos `order_id`, `total_amount` e `total_taxes`.
+- **Agregações:** Calcula a média de receita e de impostos pagos por mês e ano.
+- **Persistência:** Armazena os resultados processados em um banco de dados SQLite.
+- **Extra CSV:** Exporta um arquivo adicional (`extra.csv`) contendo os dados agregados (ano, mês, receita média e impostos médios) e salva esses dados também no SQLite (tabela `extra_output`).
+- **Testes:** Possui uma suíte completa para testar as funções puras e impuras.
 
 ---
 
 ## 📚 Documentação
 
-Cada função está comentada com explicações. Consulte os arquivos `.ml` para mais detalhes.
+Cada função do projeto está comentada com docstrings explicativas. Consulte os arquivos `.ml` para mais detalhes sobre a implementação.
 
 ---
 
 ## 📑 Relatório
 
-Para informações detalhadas sobre decisões de design e implementação, veja o arquivo [`report.md`](report.md).
+Para informações detalhadas sobre as decisões de design e implementação, veja o arquivo [report.md](report.md).

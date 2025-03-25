@@ -23,39 +23,42 @@ Este projeto foi desenvolvido em OCaml com o objetivo de criar um processo ETL p
 3. **Carregamento (Load)**
    - **Geração de CSV:**  
      O resultado final é escrito em um novo arquivo CSV (*output.csv*) contendo os campos *order_id*, *total_amount* e *total_taxes*.
+   - **Exportação Extra:**  
+     Além do CSV principal, é exportado um arquivo adicional (*extra.csv*) contendo os dados agregados: ano, mês, receita média e impostos médios.
    - **Persistência em SQLite:**  
-     Como funcionalidade opcional, os dados processados também são armazenados em um banco de dados SQLite, facilitando a integração com outros sistemas.
+     Os dados processados são armazenados em um banco de dados SQLite, facilitando a integração com outros sistemas. Tanto os totais por pedido quanto os dados agregados são salvos em tabelas distintas.
 
 4. **Organização e Testes**
    - **Estrutura do Projeto:**  
-     O projeto foi organizado utilizando Dune, com módulos separados para funções puras (*lib/pure.ml*), funções impuras (*lib/impure.ml*), definições de tipos (*lib/types.ml*), o executável principal (*bin/main.ml*) e os testes (*test/*).
+     O projeto foi organizado utilizando o Dune, com módulos separados para funções puras (*lib/pure.ml*), funções impuras (*lib/impure.ml*), definições de tipos (*lib/types.ml*), o executável principal (*bin/main.ml*) e os testes (*test/*).
    - **Testes:**  
      Foram criadas suítes de testes unitários para as funções puras e impuras, garantindo a confiabilidade do sistema.
 
 ## Dificuldades e Ajustes Realizados
 
-Durante o desenvolvimento do projeto, algumas dificuldades e mudanças foram necessárias, dentre as quais destacam-se:
+Durante o desenvolvimento, foram superados desafios e implementadas mudanças significativas:
 
 - **Ambiguidade de Tipos e Anotações:**  
-  Houve problemas com a inferência de tipos, especialmente no uso do `List.fold_left` em *group_order_items*. Foi necessário adicionar anotações explícitas ao acumulador para que o compilador interpretasse corretamente o tipo da lista.
+  Problemas com a inferência de tipos no uso de `List.fold_left` em *group_order_items* exigiram a adição de anotações explícitas no acumulador.
 
 - **Ajuste de Warnings e Flags:**  
-  Foram removidos avisos relacionados ao uso do `rec` em funções não-recursivas e aos padrões de desempacotamento de tuplas, utilizando underscores para indicar variáveis não utilizadas.
+  Foram resolvidos avisos relativos ao uso desnecessário do `rec` e à criação de variáveis não utilizadas, adotando underscores para variáveis ignoradas nas tuplas.
 
 - **Configuração do PPX para Lwt:**  
-  Inicialmente, foi tentado utilizar o PPX `ppx_let` para habilitar a sintaxe `let%lwt`, mas esse pacote não estava disponível. Após pesquisas, foi identificado que o pacote correto era o `lwt_ppx`, e as configurações do Dune foram ajustadas para utilizar `(preprocess (pps lwt_ppx))`.
+  Inicialmente, tentou-se utilizar o PPX `ppx_let` para a sintaxe `let%lwt`, mas foi necessário identificar e configurar corretamente o pacote `lwt_ppx`.
 
 - **Problemas com Wrapping dos Módulos:**  
-  A configuração padrão do Dune gerava um módulo wrapper (ex.: *ProgFuncETL*) que ocasionava dependências circulares. Para resolver, foi desativado o wrapping com `(wrapped false)` e, consequentemente, as referências internas aos módulos foram ajustadas.
+  A configuração padrão do Dune gerava um módulo wrapper que ocasionava dependências circulares. Foi desativado o wrapping com `(wrapped false)` e as referências internas foram ajustadas.
 
 - **Integração com os Testes:**  
-  Algumas funções não estavam acessíveis nos testes devido à forma como os módulos eram importados. Foi necessário abrir os módulos individuais (como *Impure* e *Types*) nos arquivos de teste para que todas as funções ficassem disponíveis.
+  Algumas funções não estavam acessíveis nos testes, exigindo a abertura dos módulos individuais (como *Impure* e *Types*) nos arquivos de teste.
 
-Esses ajustes foram essenciais para que o projeto atendesse a todos os requisitos e funcionasse corretamente.
+- **Implementação da Funcionalidade Extra:**  
+  Para atender ao requisito opcional adicional, foi implementada a exportação de um arquivo `extra.csv` contendo os dados agregados (ano, mês, receita média e impostos médios) e o armazenamento desses dados em uma nova tabela (`extra_output`) no SQLite. Essa adição demandou alterações nas funções de I/O e persistência.
 
 ## Considerações Finais
 
-Durante o desenvolvimento, foram aplicadas boas práticas do paradigma funcional, como o uso de funções de ordem superior e a clara separação entre funções puras e impuras. Essa abordagem melhora a legibilidade, modularidade e manutenibilidade do código.
+Foram aplicadas boas práticas do paradigma funcional, como o uso intensivo de funções de ordem superior e a separação clara entre funções puras e impuras, o que melhora a legibilidade, modularidade e manutenibilidade do código.
 
 ### Declaração sobre o Uso de IA Generativa
 
@@ -64,7 +67,7 @@ Declaro que, embora tenha utilizado ferramentas de auxílio para referência e o
 ## Instruções para Reproduzir o Projeto
 
 1. **Instalar Dependências:**  
-   Utilize opam para instalar as dependências listadas.
+   Utilize o opam para instalar as dependências necessárias.
 
 2. **Compilar o Projeto:**  
    Na raiz do projeto, execute `dune build` para compilar todos os módulos.

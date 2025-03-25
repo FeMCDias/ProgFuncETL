@@ -52,6 +52,41 @@ let write_output_to_sqlite (db_file : string) (outputs : order_output list) : un
   ignore (Sqlite3.db_close db)
 
 (** 
+   Exporta os dados agregados para um arquivo CSV chamado extra.csv.
+   Cada linha contém: ano, mês, receita média e impostos médios.
+*)
+let write_extra_csv (filename : string) (aggregated : aggregated list) : unit =
+  let header = "year,month,avg_revenue,avg_taxes" in
+  let rows = List.map (fun a ->
+    Printf.sprintf "%d,%d,%.2f,%.2f" a.year a.month a.avg_revenue a.avg_taxes
+  ) aggregated in
+  let csv_data = header :: rows in
+  let csv_data_rows = List.map (fun line -> [line]) csv_data in
+  write_csv filename csv_data_rows
+
+(** 
+   Salva os dados agregados em um banco de dados SQLite.
+   Cria a tabela extra_output para armazenar: ano, mês, receita média e impostos médios.
+*)
+let write_extra_to_sqlite (db_file : string) (aggregated : aggregated list) : unit =
+  let db = Sqlite3.db_open db_file in
+  let sql_create = "CREATE TABLE IF NOT EXISTS extra_output (year INTEGER, month INTEGER, avg_revenue REAL, avg_taxes REAL);" in
+  let _ = Sqlite3.exec db sql_create in
+  let insert_stmt = "INSERT INTO extra_output (year, month, avg_revenue, avg_taxes) VALUES (?, ?, ?, ?);" in
+  let stmt = Sqlite3.prepare db insert_stmt in
+  List.iter (fun a ->
+    let _ = Sqlite3.bind stmt 1 (Sqlite3.Data.INT (Int64.of_int a.year)) in
+    let _ = Sqlite3.bind stmt 2 (Sqlite3.Data.INT (Int64.of_int a.month)) in
+    let _ = Sqlite3.bind stmt 3 (Sqlite3.Data.FLOAT a.avg_revenue) in
+    let _ = Sqlite3.bind stmt 4 (Sqlite3.Data.FLOAT a.avg_taxes) in
+    let _ = Sqlite3.step stmt in
+    let _ = Sqlite3.reset stmt in
+    ()
+  ) aggregated;
+  ignore (Sqlite3.finalize stmt);
+  ignore (Sqlite3.db_close db)
+
+(** 
    Executa o processo ETL completo:
    - Lê os arquivos CSV de orders e order_items.
    - Converte as linhas (exceto cabeçalhos) para registros.
