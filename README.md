@@ -7,7 +7,7 @@ Projeto em OCaml que implementa um processo **ETL (Extract, Transform, Load)** p
 
 ## 📁 Estrutura do Projeto
 
-```
+````
 ProgFuncETL/
 ├── dune-project            # Configuração do Dune (lang dune 3.14, etc.)
 ├── ProgFuncETL.opam        # Arquivo opcional para gerenciamento com opam
@@ -24,7 +24,7 @@ ProgFuncETL/
 │   ├── test_pure.ml        # Testes unitários das funções puras
 │   └── test_impure.ml      # Testes das funções impuras
 └── report.md               # Relatório do projeto
-```
+````
 
 ---
 
@@ -86,4 +86,4 @@ Cada função do projeto está comentada com docstrings explicativas. Consulte o
 
 ## 📑 Relatório
 
-Para informações detalhadas sobre as decisões de design e implementação, veja o arquivo [report.md](report.md).
+Para informações detalhadas sobre as decisões de design e implementação, veja o arquivo [relatorio.md](relatorio.md).
