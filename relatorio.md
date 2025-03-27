@@ -62,7 +62,7 @@ Foram aplicadas boas práticas do paradigma funcional, como o uso intensivo de f
 
 ### Declaração sobre o Uso de IA Generativa
 
-Declaro que, embora tenha utilizado ferramentas de auxílio para referência e organização das ideias durante o desenvolvimento, todo o código e a documentação foram revisados e adaptados manualmente para atender aos requisitos do projeto. Este relatório foi escrito de forma humana, sem parecer gerado exclusivamente por IA.
+Declaro o uso de IA Generativa na organização, correção, e orientação deste projeto e relatório. Embora isso, todo o código e a documentação foram revisados e adaptados manualmente para atender aos requisitos do projeto.
 
 ## Instruções para Reproduzir o Projeto
 
