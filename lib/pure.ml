@@ -48,7 +48,7 @@ let group_order_items (items : order_item list) : (int * order_item list) list =
 let compute_totals (items : order_item list) : (float * float) =
   let calc (rev, tax_sum) item =
     let revenue = float_of_int item.quantity *. item.price in
-    let tax_amount = (item.tax /. 100.0) *. revenue in
+    let tax_amount = (item.tax) *. revenue in
     (rev +. revenue, tax_sum +. tax_amount)
   in
   List.fold_left calc (0.0, 0.0) items
@@ -61,17 +61,19 @@ let compute_totals (items : order_item list) : (float * float) =
 let join_and_compute (orders : order list) (items : order_item list) 
     (filter_status : string) (filter_origin : string) : order_output list =
   let orders_filtered = List.filter (fun o ->
-      String.lowercase_ascii o.status = String.lowercase_ascii filter_status &&
-      o.origin = filter_origin
+      (filter_status = "" || String.lowercase_ascii o.status = String.lowercase_ascii filter_status) &&
+      (filter_origin = "" || o.origin = filter_origin)
     ) orders in
   let items_grouped = group_order_items items in
   let find_items order_id =
     try List.assoc order_id items_grouped with Not_found -> []
   in
-  List.map (fun o ->
+  List.filter_map (fun o ->
     let order_items = find_items o.id in
-    let total_amount, total_taxes = compute_totals order_items in
-    { order_id = o.id; total_amount; total_taxes }
+    if order_items = [] then None
+    else 
+      let total_amount, total_taxes = compute_totals order_items in
+      Some { order_id = o.id; total_amount; total_taxes }
   ) orders_filtered
 
 (** 

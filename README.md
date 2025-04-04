@@ -42,6 +42,12 @@ Em alguns macbooks, pode ser necessário instalar o pkg-config antes de instalar
 brew install pkg-config
 ```
 
+Lembre de configurar o ambiente do opam:
+
+```bash
+eval $(opam env)
+```
+
 ---
 
 ## 🔧 Compilação e Execução

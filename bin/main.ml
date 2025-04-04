@@ -22,8 +22,8 @@ let () =
   in
 
   (* Parâmetros de filtro *)
-  let filter_status = "complete" in
-  let filter_origin = "O" in
+  let filter_status = "" in
+  let filter_origin = "" in
 
   (* Nomes dos arquivos de saída *)
   let output_file = "output.csv" in
