@@ -55,7 +55,7 @@ dune runtest  # rodando os testes para validar o código
 ```
 <br>
 
-> Antes de executar o ETL, abra o arquivo `bin/main.ml` e verifique as variáveis de filtro (`filter_status` e `filter_origin`) para ajustar a filtragem conforme necessário (Filtragem descrita em detalhes abaixo das funcionalidades).
+> Antes de executar o ETL, abra o arquivo `bin/main.ml` e verifique as variáveis de filtro (`filter_status` e `filter_origin`) para ajustar a filtragem conforme necessário (Filtragem descrita em detalhes abaixo da seção "🚀 Funcionalidades").
 
 
 ```
@@ -115,8 +115,7 @@ No arquivo `main.ml` você encontrará duas variáveis de filtro:
 
 - **Sem filtros:**  
   Se você quiser processar todos os pedidos que possuem itens, basta definir ambas as variáveis como strings vazias:
-  ```
-  ocaml
+  ```ocaml
   let filter_status = ""
   let filter_origin = ""
   ```
@@ -125,8 +124,7 @@ No arquivo `main.ml` você encontrará duas variáveis de filtro:
 
 - **Com filtros:**  
   Para aplicar filtros, defina os valores conforme necessário. Por exemplo, para processar apenas os pedidos com status `"complete"` e origem `"O"`, configure:
-  ```
-  ocaml
+  ```ocaml
   let filter_status = "complete"
   let filter_origin = "O"
   ```
