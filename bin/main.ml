@@ -3,19 +3,20 @@ open Types
 
 (** 
    Ponto de entrada do programa ETL.
-   Realiza o download dos CSVs, executa o ETL, gera os arquivos de saída (output.csv e extra.csv)
-   e salva os dados no banco de dados SQLite.
+   Realiza o download dos CSVs de pedidos e itens de pedidos a partir das URLs,
+   salva os arquivos de entrada na pasta "data", executa o ETL, gera os arquivos de saída na
+   mesma pasta e salva os dados no banco de dados SQLite localizado em "data".
 *)
 let () =
-  (* URLs para os dados CSV (utilize as URLs brutas do seu gist) *)
+  (* URLs para os dados CSV *)
   let orders_url = "https://gist.githubusercontent.com/FeMCDias/534e4c562ff2fa896f89483d22a45297/raw/order.csv" in
   let order_items_url = "https://gist.githubusercontent.com/FeMCDias/534e4c562ff2fa896f89483d22a45297/raw/order_item.csv" in
 
-  (* Nomes dos arquivos CSV locais *)
-  let orders_file = "orders.csv" in
-  let order_items_file = "order_items.csv" in
+  (* Nomes dos arquivos CSV locais para armazenar os dados baixados na pasta "data" *)
+  let orders_file = "data/orders.csv" in
+  let order_items_file = "data/order_items.csv" in
 
-  (* Download dos arquivos CSV *)
+  (* Baixa os arquivos CSV das URLs e salva na pasta "data" *)
   let () =
     read_csv_from_url orders_url orders_file;
     read_csv_from_url order_items_url order_items_file
@@ -25,9 +26,9 @@ let () =
   let filter_status = "" in
   let filter_origin = "" in
 
-  (* Nomes dos arquivos de saída *)
-  let output_file = "output.csv" in
-  let extra_file = "extra.csv" in
+  (* Nomes dos arquivos CSV de saída na pasta "data" *)
+  let output_file = "data/output.csv" in
+  let extra_file = "data/extra.csv" in
 
   (* Executa o processo ETL com agregação *)
   let outputs, aggregated = run_etl_with_aggregation orders_file order_items_file filter_status filter_origin in
@@ -54,11 +55,11 @@ let () =
       a.year a.month a.avg_revenue a.avg_taxes
   ) aggregated;
 
-  (* Salva os resultados principais no banco de dados SQLite *)
-  let db_file = "output.db" in
+  (* Salva os resultados principais no banco de dados SQLite na pasta "data" *)
+  let db_file = "data/output.db" in
   write_output_to_sqlite db_file outputs;
   Printf.printf "\nDados salvos no banco de dados SQLite: %s\n" db_file;
 
-  (* Salva os dados agregados no banco de dados SQLite *)
+  (* Salva os dados agregados no banco de dados SQLite na pasta "data" *)
   write_extra_to_sqlite db_file aggregated;
   Printf.printf "\nDados agregados salvos no banco de dados SQLite: %s\n" db_file

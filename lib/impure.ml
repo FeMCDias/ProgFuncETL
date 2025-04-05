@@ -15,7 +15,7 @@ let write_csv (filename : string) (data : string list list) : unit =
   Csv.save filename data
 
 (** 
-   Lê um arquivo CSV a partir de uma URL e salva-o em [local_file].
+   Lê um arquivo CSV a partir de uma URL e salva-o no arquivo [local_file].
    Requer a biblioteca [Cohttp_lwt_unix] e utiliza Lwt para operações assíncronas.
 *)
 let read_csv_from_url (url : string) (local_file : string) : unit =
@@ -33,6 +33,7 @@ let read_csv_from_url (url : string) (local_file : string) : unit =
 (** 
    Salva os dados de saída em um banco de dados SQLite.
    Utiliza a biblioteca [Sqlite3].
+   Cria a tabela [order_output] se ela não existir e insere os registros.
 *)
 let write_output_to_sqlite (db_file : string) (outputs : order_output list) : unit =
   let db = Sqlite3.db_open db_file in
@@ -52,8 +53,8 @@ let write_output_to_sqlite (db_file : string) (outputs : order_output list) : un
   ignore (Sqlite3.db_close db)
 
 (** 
-   Exporta os dados agregados para um arquivo CSV chamado extra.csv.
-   Cada linha contém: ano, mês, receita média e impostos médios.
+   Exporta os dados agregados para um arquivo CSV.
+   O arquivo conterá um cabeçalho e cada linha com: ano, mês, receita média e impostos médios.
 *)
 let write_extra_csv (filename : string) (aggregated : aggregated list) : unit =
   let header = "year,month,avg_revenue,avg_taxes" in
@@ -66,7 +67,7 @@ let write_extra_csv (filename : string) (aggregated : aggregated list) : unit =
 
 (** 
    Salva os dados agregados em um banco de dados SQLite.
-   Cria a tabela extra_output para armazenar: ano, mês, receita média e impostos médios.
+   Cria a tabela [extra_output] se ela não existir e insere os registros.
 *)
 let write_extra_to_sqlite (db_file : string) (aggregated : aggregated list) : unit =
   let db = Sqlite3.db_open db_file in
@@ -87,10 +88,10 @@ let write_extra_to_sqlite (db_file : string) (aggregated : aggregated list) : un
   ignore (Sqlite3.db_close db)
 
 (** 
-   Executa o processo ETL completo:
+   Executa o processo ETL completo.
    - Lê os arquivos CSV de orders e order_items.
-   - Converte as linhas (exceto cabeçalhos) para registros.
-   - Aplica a transformação e junção utilizando funções puras.
+   - Remove os cabeçalhos e converte as linhas em records utilizando as funções puras.
+   - Realiza a junção dos dados e aplica os filtros.
    - Retorna a lista de [order_output].
 *)
 let run_etl (orders_file : string) (order_items_file : string) (filter_status : string) (filter_origin : string) : order_output list =
@@ -104,8 +105,10 @@ let run_etl (orders_file : string) (order_items_file : string) (filter_status : 
   join_and_compute orders order_items filter_status filter_origin
 
 (** 
-   Executa o processo ETL completo e calcula também a agregação por mês e ano.
-   Retorna uma tupla: (lista de [order_output], lista de [aggregated]).
+   Executa o processo ETL completo e realiza a agregação por mês e ano.
+   Retorna uma tupla contendo:
+   - A lista de [order_output] gerada.
+   - A lista de [aggregated] com os dados agregados.
 *)
 let run_etl_with_aggregation (orders_file : string) (order_items_file : string) (filter_status : string) (filter_origin : string) : (order_output list * aggregated list) =
   let outputs = run_etl orders_file order_items_file filter_status filter_origin in
