@@ -1,0 +1,14 @@
+{
+  "name": "OCaml ETL DevContainer",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": [
+    "ocamllabs.ocaml-platform"
+  ],
+  "postCreateCommand": "/home/vscode/postCreate.sh",
+  "remoteUser": "vscode"
+}

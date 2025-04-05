@@ -27,65 +27,69 @@ ProgFuncETL/
 │   └── extra.csv           # Arquivo CSV com dados agregados
 ├── test/
 │   ├── dune                # Configuração dos testes
-│   ├── test_pure.ml        # Testes unitários das funções puras
-│   └── test_impure.ml      # Testes das funções impuras
+│   └── test_pure.ml        # Testes unitários das funções puras
 └── report.md               # Relatório do projeto
 ```
 
 ---
 
-## 📦 Dependências
+## 🔧 Compilação e Execução (via Docker)
 
-Instale com o [opam](https://opam.ocaml.org/):
+O projeto já inclui uma pasta `devcontainer/` com a configuração necessária. Para executar via contêiner, siga os passos abaixo:
 
-```
-opam install dune csv sqlite3 cohttp-lwt-unix lwt lwt_ppx ounit2
-```
-
-
-Em alguns macbooks, pode ser necessário instalar o pkg-config antes de instalar as dependências para o SQLite:
-
-```
-brew install pkg-config
-```
-
-
-Lembre de configurar o ambiente do opam:
-
+1. **Rebuild do Contêiner:**  
+   - No VS Code, abra a paleta de comandos e selecione "Dev-Containers: Rebuild and Reopen in Container". Isto irá baixar a imagem do contêiner e abrir o projeto dentro dele.
+2. **Dentro do Contêiner, Execute os Comandos:**  
+   Abra um terminal integrado e execute:
 ```
 eval $(opam env)
 ```
-
-
----
-
-## 🔧 Compilação e Execução
-
-### Compilar o projeto:
 ```
 dune clean
+```
+```
 dune build
 ```
-
-
-### Rodar os testes:
 ```
-dune runtest
+dune runtest  # rodando os testes para validar o código
 ```
+<br>
 
-
-### Executar o ETL:
 > Antes de executar o ETL, abra o arquivo `bin/main.ml` e verifique as variáveis de filtro (`filter_status` e `filter_origin`) para ajustar a filtragem conforme necessário (Filtragem descrita em detalhes abaixo das funcionalidades).
 
-Para executar o ETL, utilize o seguinte comando:
+
 ```
 dune exec bin/main.exe
 ```
-ou, dependendo da configuração:
-```
-dune exec progfuncetl_app
-```
+3. **Acessar os Resultados:**  
+   Após a execução, os arquivos CSV gerados estarão na pasta `data/` e o banco de dados SQLite (`output.db`) estará na mesma pasta.
 
+4. **Acessar o Banco de Dados:**
+    Para acessar o banco de dados SQLite, utilize um cliente SQLite ou execute o seguinte comando no terminal:
+  ```
+  sqlite3 data/output.db
+  ```
+   Isso abrirá o banco de dados e permitirá que você execute consultas SQL diretamente.
+   
+   Queries para executar dentro do banco de dados:
+   ```sql
+   SELECT * FROM order_output; -- Para ver os totais por pedido
+   SELECT * FROM extra_output; -- Para ver os dados agregados
+   ```
+   Lembrando que os schemas das tabelas são:
+  ```sql
+  CREATE TABLE order_output (
+      order_id TEXT,
+      total_amount REAL,
+      total_taxes REAL
+  );
+  CREATE TABLE extra_output (
+      year INTEGER,
+      month INTEGER,
+      avg_revenue REAL,
+      avg_taxes REAL
+  );
+  ```
 
 ---
 
@@ -96,7 +100,7 @@ dune exec progfuncetl_app
 - **Geração de CSV:** Exporta um arquivo com os campos `order_id`, `total_amount` e `total_taxes`.
 - **Agregações:** Calcula a média de receita e de impostos pagos por mês e ano.
 - **Persistência:** Armazena os resultados processados em um banco de dados SQLite (`data/output.db`), com tabelas separadas para os totais por pedido (`order_output`) e dados agregados (`extra_output`) com ano, mês, receita média e impostos médios. Todos os arquivos gerados são salvos na pasta `data/`.
-- **Testes:** Possui uma suíte completa para testar as funções puras e impuras.
+- **Testes:** Possui uma suíte completa para testar as funções puras.
 
 ---
 

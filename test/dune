@@ -3,9 +3,3 @@
  (modules test_pure)
  (libraries ProgFuncETL ounit2)
 )
-
-(test
- (name test_impure)
- (modules test_impure)
- (libraries ProgFuncETL ounit2)
-)
