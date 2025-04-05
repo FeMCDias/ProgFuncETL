@@ -35,7 +35,7 @@ Este projeto foi desenvolvido em OCaml com o objetivo de criar um processo ETL p
   - *pure.ml*: Contém as funções puras responsáveis pela transformação, junção e agregação.
   - *impure.ml*: Implementa as operações de I/O, download via HTTP e persistência em SQLite.
   - *main.ml*: Ponto de entrada que integra todo o fluxo ETL.
-  - *test/*: Conjunto de testes unitários para validar as funções puras e impuras usando OUnit2.
+  - *test/*: Conjunto de testes unitários para validar as funções puras usando OUnit2.
 - **Testes:**  
   Implementei suítes de testes para verificar o funcionamento correto de todas as funções, garantindo robustez e facilitando futuras manutenções.
 
